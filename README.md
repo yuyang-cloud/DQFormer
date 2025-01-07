@@ -31,8 +31,12 @@ Install `sptr`
 ```
 cd dqformer/third_party/SparseTransformer && python setup.py install
 ```
-
 Note: Make sure you have installed `gcc` and `cuda`, and `nvcc` can work (if you install cuda by conda, it won't provide nvcc and you should install cuda manually.)
+
+
+Download the pre-trained weights for the backbone and place them in the `DQFormer/ckpts` directory.
+* [SemanticKITTI Backbone](https://drive.google.com/file/d/1NHqk3LlNafgLyU5ayZ8VVeGlPb_4GlU4/view?usp=sharing)
+* [nuScenes Backbone](https://drive.google.com/file/d/1xp0OFeKnLye0sBJ55Ad6snbeElEM-DaT/view?usp=sharing)
 
 ## Datasets Preparation
 
