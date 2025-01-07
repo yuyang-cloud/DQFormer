@@ -1,0 +1,3 @@
+BACKBONE:
+    INPUT_DIM: 4 # coords + intensity
+    CHANNELS: [32, 32, 64, 128, 256, 256, 128, 64, 32]

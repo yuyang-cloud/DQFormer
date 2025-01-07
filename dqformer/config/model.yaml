@@ -1,0 +1,89 @@
+EXPERIMENT:
+    ID: dqformer
+
+KITTI_TASKS: &kitti_tasks
+    - num_class: 8
+      class_names: ["car", "bicycle", "motorcycle", "truck", "other-vehicle", "person", "bicyclist", "motorcyclist"]
+      kernel_size: 2
+      stride: 2
+
+NUSCENES_TASKS: &nuscenes_tasks
+    - num_class: 10
+      class_names: ["barrier", "bycicle", "bus", "car", "construction_vehicle", "motorcycle", "pedestrian", "traffic_cone", "trailer", "truck"]
+
+TRAIN:
+    STEP: 40
+    DECAY: 0.1
+    LR: 0.0001
+    MAX_EPOCH: 100
+    BATCH_SIZE: 1
+    BATCH_ACC: 4
+    NUM_WORKERS: 16
+    N_GPUS: -1
+
+    AUG: True
+    SUBSAMPLE: False
+
+MODEL:
+    DATASET: KITTI
+    OVERLAP_THRESHOLD: 0.8
+
+LOSS:
+    WEIGHTS_KEYS: ['loss_ce','loss_dice','loss_mask']
+    WEIGHTS: [2.0, 5.0, 5.0]
+    Th_WEIGHTS_KEYS: ['loss_hm','loss_dice','loss_mask']
+    Th_WEIGHTS: [1.0, 5.0, 5.0]
+    EOS_COEF: 0.1
+    NUM_POINTS: 50000 
+    NUM_MASK_PTS: 500 # points to sample within each mask
+    P_RATIO: 0.4 # ratio of total points to use for the matching
+    SEM:
+        WEIGHTS: [2,6] #Ce, Lovasz
+
+KITTI:
+    PATH: data/kitti
+    CONFIG: datasets/semantic-kitti.yaml
+    NUM_CLASSES: 20
+    IGNORE_LABEL: 0
+    MIN_POINTS: 10 #smallest mask
+    SPACE: # coord limits
+        [[-51.2,51.2],[-51.2,51.2],[-4.0,2.4]]
+    SUB_NUM_POINTS: 80000
+    USE_TTA: False
+    TASK: *kitti_tasks
+    ASSIGNER:
+        out_size_factor: 4
+        dense_reg: 1
+        gaussian_overlap: 0.1
+        max_objs: 180
+        min_radius: 2
+        gt_kernel_size: 1
+        pc_range: [-51.2, -51.2, -4.0, 51.2, 51.2, 2.4]
+        voxel_size: [0.05, 0.05, 0.05]
+        dataset_type: KITTI
+        tasks: *kitti_tasks
+
+
+NUSCENES:
+    PATH: data/nuscenes
+    CONFIG: datasets/semantic-nuscenes.yaml
+    NUM_CLASSES: 17
+    IGNORE_LABEL: 0
+    MIN_POINTS: 10 #smallest mask
+    SPACE: # coord limits
+        [[-51.2,51.2],[-51.2,51.2],[-5.0,3]]
+    SUB_NUM_POINTS: 50000
+    USE_TTA: False
+    VOTE_NUM: 16
+    TASK: *nuscenes_tasks
+    ASSIGNER:
+        out_size_factor: 4
+        dense_reg: 1
+        gaussian_overlap: 0.1
+        max_objs: 100
+        min_radius: 2
+        gt_kernel_size: 1
+        pc_range: [-51.2, -51.2, -5.0, 51.2, 51.2, 3]
+        voxel_size: [0.1, 0.1, 0.1]
+        dataset_type: NUSCENES
+        tasks: *nuscenes_tasks
